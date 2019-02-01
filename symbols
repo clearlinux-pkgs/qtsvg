@@ -275,6 +275,7 @@ libQt5Svg.so.5:_ZNK11QSvgEllipse6boundsEP8QPainterR15QSvgExtraStates
 libQt5Svg.so.5:_ZNK11QSvgHandler12currentColorEv
 libQt5Svg.so.5:_ZNK11QSvgHandler17animationDurationEv
 libQt5Svg.so.5:_ZNK11QSvgHandler23defaultCoordinateSystemEv
+libQt5Svg.so.5:_ZNK11QSvgHandler6deviceEv
 libQt5Svg.so.5:_ZNK11QSvgHandler7inStyleEv
 libQt5Svg.so.5:_ZNK11QSvgHandler8documentEv
 libQt5Svg.so.5:_ZNK11QSvgHandler8selectorEv
