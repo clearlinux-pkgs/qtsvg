@@ -4,7 +4,7 @@ libQt5Svg.so.5:Qt_5.1
 libQt5Svg.so.5:Qt_5.10
 libQt5Svg.so.5:Qt_5.11
 libQt5Svg.so.5:Qt_5.12
-libQt5Svg.so.5:Qt_5.12.2_PRIVATE_API
+libQt5Svg.so.5:Qt_5.12.3_PRIVATE_API
 libQt5Svg.so.5:Qt_5.2
 libQt5Svg.so.5:Qt_5.3
 libQt5Svg.so.5:Qt_5.4
@@ -176,6 +176,7 @@ libQt5Svg.so.5:_ZN16QSvgTinyDocumentD1Ev
 libQt5Svg.so.5:_ZN16QSvgTinyDocumentD2Ev
 libQt5Svg.so.5:_ZN17QSvgGradientStyle11setStopLinkERK7QStringP16QSvgTinyDocument
 libQt5Svg.so.5:_ZN17QSvgGradientStyle12resolveStopsEv
+libQt5Svg.so.5:_ZN17QSvgGradientStyle19resolveStops_helperEP11QStringList
 libQt5Svg.so.5:_ZN17QSvgGradientStyle5brushEP8QPainterR15QSvgExtraStates
 libQt5Svg.so.5:_ZN17QSvgGradientStyle9setMatrixERK7QMatrix
 libQt5Svg.so.5:_ZN17QSvgGradientStyleC1EP9QGradient
