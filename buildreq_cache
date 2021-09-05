@@ -1,4 +1,3 @@
-5.15.0
+5.15.2
 mesa-dev
 pkgconfig(zlib)
-zlib-dev
