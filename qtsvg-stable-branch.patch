@@ -26,6 +26,10 @@ Robert Löhning (2):
       Avoid buffer overflow in isSupportedSvgFeature
       Limit font size to avoid numerous overflows
 
+Tarja Sundqvist (2):
+      Update commercial license headers
+      Revert "Update commercial license headers"
+
 diff --git a/dist/changes-5.12.10 b/dist/changes-5.12.10
 new file mode 100644
 index 0000000..b8f8f69
