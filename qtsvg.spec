@@ -4,7 +4,7 @@
 #
 Name     : qtsvg
 Version  : 5.15.2
-Release  : 29
+Release  : 30
 URL      : https://download.qt.io/official_releases/qt/5.15/5.15.2/submodules/qtsvg-everywhere-src-5.15.2.tar.xz
 Source0  : https://download.qt.io/official_releases/qt/5.15/5.15.2/submodules/qtsvg-everywhere-src-5.15.2.tar.xz
 Summary  : No detailed summary available
@@ -83,18 +83,18 @@ test -r config.log && cat config.log
 make  %{?_smp_mflags}
 
 %install
-export SOURCE_DATE_EPOCH=1658344782
+export SOURCE_DATE_EPOCH=1662657549
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/qtsvg
-cp %{_builddir}/qtsvg-everywhere-src-5.15.2/LICENSE.FDL %{buildroot}/usr/share/package-licenses/qtsvg/61907422fefcd2313a9b570c31d203a6dbebd333
-cp %{_builddir}/qtsvg-everywhere-src-5.15.2/LICENSE.GPL2 %{buildroot}/usr/share/package-licenses/qtsvg/4cc77b90af91e615a64ae04893fdffa7939db84c
-cp %{_builddir}/qtsvg-everywhere-src-5.15.2/LICENSE.GPL3 %{buildroot}/usr/share/package-licenses/qtsvg/8624bcdae55baeef00cd11d5dfcfa60f68710a02
-cp %{_builddir}/qtsvg-everywhere-src-5.15.2/LICENSE.GPL3-EXCEPT %{buildroot}/usr/share/package-licenses/qtsvg/e93757aefa405f2c9a8a55e780ae9c39542dfc3a
-cp %{_builddir}/qtsvg-everywhere-src-5.15.2/LICENSE.GPLv3 %{buildroot}/usr/share/package-licenses/qtsvg/7d974f34cf5fd474f0fdf6ebc8d410ea5c8b72de
-cp %{_builddir}/qtsvg-everywhere-src-5.15.2/LICENSE.LGPL3 %{buildroot}/usr/share/package-licenses/qtsvg/f45ee1c765646813b442ca58de72e20a64a7ddba
-cp %{_builddir}/qtsvg-everywhere-src-5.15.2/LICENSE.LGPLv21 %{buildroot}/usr/share/package-licenses/qtsvg/fe04fe44c5e1a407572a5cca79d39afd674bccf3
-cp %{_builddir}/qtsvg-everywhere-src-5.15.2/LICENSE.LGPLv3 %{buildroot}/usr/share/package-licenses/qtsvg/d8b489a3c3d500a6601181e3db39bec6124b86fc
-cp %{_builddir}/qtsvg-everywhere-src-5.15.2/src/svg/XSVG_LICENSE.txt %{buildroot}/usr/share/package-licenses/qtsvg/9c7d86ef8571df996010cb73af37e99b031cd68e
+cp %{_builddir}/qtsvg-everywhere-src-%{version}/LICENSE.FDL %{buildroot}/usr/share/package-licenses/qtsvg/61907422fefcd2313a9b570c31d203a6dbebd333 || :
+cp %{_builddir}/qtsvg-everywhere-src-%{version}/LICENSE.GPL2 %{buildroot}/usr/share/package-licenses/qtsvg/4cc77b90af91e615a64ae04893fdffa7939db84c || :
+cp %{_builddir}/qtsvg-everywhere-src-%{version}/LICENSE.GPL3 %{buildroot}/usr/share/package-licenses/qtsvg/8624bcdae55baeef00cd11d5dfcfa60f68710a02 || :
+cp %{_builddir}/qtsvg-everywhere-src-%{version}/LICENSE.GPL3-EXCEPT %{buildroot}/usr/share/package-licenses/qtsvg/e93757aefa405f2c9a8a55e780ae9c39542dfc3a || :
+cp %{_builddir}/qtsvg-everywhere-src-%{version}/LICENSE.GPLv3 %{buildroot}/usr/share/package-licenses/qtsvg/7d974f34cf5fd474f0fdf6ebc8d410ea5c8b72de || :
+cp %{_builddir}/qtsvg-everywhere-src-%{version}/LICENSE.LGPL3 %{buildroot}/usr/share/package-licenses/qtsvg/f45ee1c765646813b442ca58de72e20a64a7ddba || :
+cp %{_builddir}/qtsvg-everywhere-src-%{version}/LICENSE.LGPLv21 %{buildroot}/usr/share/package-licenses/qtsvg/fe04fe44c5e1a407572a5cca79d39afd674bccf3 || :
+cp %{_builddir}/qtsvg-everywhere-src-%{version}/LICENSE.LGPLv3 %{buildroot}/usr/share/package-licenses/qtsvg/d8b489a3c3d500a6601181e3db39bec6124b86fc || :
+cp %{_builddir}/qtsvg-everywhere-src-%{version}/src/svg/XSVG_LICENSE.txt %{buildroot}/usr/share/package-licenses/qtsvg/9c7d86ef8571df996010cb73af37e99b031cd68e || :
 %make_install
 
 %files

@@ -13,8 +13,8 @@ Antti Kokko (2):
 Eirik Aavitsland (7):
       Improve handling of malformed numeric values in svg files
       Make image handler accept UTF-16/UTF-32 encoded SVGs
-      Fix parsing of arc elements in paths
       Fix parsing of animation clock values
+      Fix parsing of arc elements in paths
       Do stricter error checking when parsing path nodes
       SVG Image reading: Reject oversize svgs as corrupt
       Unconditionally stop parsing after the svg end tag
@@ -27,15 +27,17 @@ Jani Heikkinen (2):
       Bump version
 
 Robert Löhning (2):
-      Avoid buffer overflow in isSupportedSvgFeature
       Limit font size to avoid numerous overflows
+      Avoid buffer overflow in isSupportedSvgFeature
 
-Tarja Sundqvist (5):
+Tarja Sundqvist (7):
       Update commercial license headers
       Revert "Update commercial license headers"
       Bump version
+      Bump version
       Merge remote-tracking branch 'origin/tqtc/lts-5.15.4' into tqtc/lts-5.15-opensource
       Merge remote-tracking branch 'origin/tqtc/lts-5.15.5' into tqtc/lts-5.15-opensource
+      Merge remote-tracking branch 'origin/tqtc/lts-5.15.6' into tqtc/lts-5.15-opensource
 
 diff --git a/dist/changes-5.12.10 b/dist/changes-5.12.10
 new file mode 100644
@@ -161,7 +163,7 @@ index bd39b2a..fd3529a 100644
  
  QT_END_NAMESPACE
 diff --git a/src/svg/qsvghandler.cpp b/src/svg/qsvghandler.cpp
-index c937254..f2653af 100644
+index c937254..b07a8ee 100644
 --- a/src/svg/qsvghandler.cpp
 +++ b/src/svg/qsvghandler.cpp
 @@ -65,6 +65,7 @@
@@ -416,12 +418,13 @@ index c937254..f2653af 100644
  }
  
  static bool parseStyle(QSvgNode *node,
-@@ -2354,6 +2364,27 @@ static bool parseAnimateNode(QSvgNode *parent,
+@@ -2354,6 +2364,28 @@ static bool parseAnimateNode(QSvgNode *parent,
      return true;
  }
  
-+static int parseClockValue(QString str, bool *ok)
++static int parseClockValue(const QString &instr, bool *ok)
 +{
++    QStringRef str(&instr);
 +    int res = 0;
 +    int ms = 1000;
 +    str = str.trimmed();
@@ -444,7 +447,7 @@ index c937254..f2653af 100644
  static bool parseAnimateColorNode(QSvgNode *parent,
                                    const QXmlStreamAttributes &attributes,
                                    QSvgHandler *handler)
-@@ -2387,23 +2418,13 @@ static bool parseAnimateColorNode(QSvgNode *parent,
+@@ -2387,23 +2419,13 @@ static bool parseAnimateColorNode(QSvgNode *parent,
          }
      }
  
@@ -475,7 +478,7 @@ index c937254..f2653af 100644
  
      QSvgAnimateColor *anim = new QSvgAnimateColor(begin, end, 0);
      anim->setArgs((targetStr == QLatin1String("fill")), colors);
-@@ -2493,24 +2514,13 @@ static bool parseAnimateTransformNode(QSvgNode *parent,
+@@ -2493,24 +2515,13 @@ static bool parseAnimateTransformNode(QSvgNode *parent,
          }
      }
  
@@ -507,7 +510,7 @@ index c937254..f2653af 100644
  
      QSvgAnimateTransform::TransformType type = QSvgAnimateTransform::Empty;
      if (typeStr == QLatin1String("translate")) {
-@@ -2566,6 +2576,8 @@ static QSvgNode *createCircleNode(QSvgNode *parent,
+@@ -2566,6 +2577,8 @@ static QSvgNode *createCircleNode(QSvgNode *parent,
      qreal ncx = toDouble(cx);
      qreal ncy = toDouble(cy);
      qreal nr  = toDouble(r);
@@ -516,7 +519,7 @@ index c937254..f2653af 100644
  
      QRectF rect(ncx-nr, ncy-nr, nr*2, nr*2);
      QSvgNode *circle = new QSvgCircle(parent, rect);
-@@ -2976,8 +2988,8 @@ static QSvgNode *createPathNode(QSvgNode *parent,
+@@ -2976,8 +2989,8 @@ static QSvgNode *createPathNode(QSvgNode *parent,
  
      QPainterPath qpath;
      qpath.setFillRule(Qt::WindingFill);
@@ -527,7 +530,7 @@ index c937254..f2653af 100644
  
      QSvgNode *path = new QSvgPath(parent, qpath);
      return path;
-@@ -3036,13 +3048,16 @@ static QSvgStyleProperty *createRadialGradientNode(QSvgNode *node,
+@@ -3036,13 +3049,16 @@ static QSvgStyleProperty *createRadialGradientNode(QSvgNode *node,
  
      qreal ncx = 0.5;
      qreal ncy = 0.5;
@@ -545,7 +548,7 @@ index c937254..f2653af 100644
  
      qreal nfx = ncx;
      if (!fx.isEmpty())
-@@ -3338,7 +3353,9 @@ static QSvgNode *createTextNode(QSvgNode *parent,
+@@ -3338,7 +3354,9 @@ static QSvgNode *createTextNode(QSvgNode *parent,
      //### editable and rotate not handled
      QSvgHandler::LengthType type;
      qreal nx = parseLength(x, type, handler);
@@ -555,7 +558,7 @@ index c937254..f2653af 100644
  
      QSvgNode *text = new QSvgText(parent, QPointF(nx, ny));
      return text;
-@@ -3679,9 +3696,7 @@ void QSvgHandler::parse()
+@@ -3679,9 +3697,7 @@ void QSvgHandler::parse()
          case QXmlStreamReader::EndElement:
              endElement(xml->name());
              ++remainingUnfinishedElements;
