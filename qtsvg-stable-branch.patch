@@ -2,9 +2,10 @@ Albert Astals Cid (2):
       Support font size not in pixels
       Fix text x/y when the length is not in pixels
 
-Allan Sandfeld Jensen (2):
+Allan Sandfeld Jensen (3):
       Clamp parsed doubles to float representable values
       Improve parsing of "r"
+      Fix assert with wrong number of argument to animateTransform
 
 Antti Kokko (2):
       Add changes file for Qt 5.12.10
@@ -163,7 +164,7 @@ index bd39b2a..fd3529a 100644
  
  QT_END_NAMESPACE
 diff --git a/src/svg/qsvghandler.cpp b/src/svg/qsvghandler.cpp
-index c937254..b07a8ee 100644
+index c937254..8dda563 100644
 --- a/src/svg/qsvghandler.cpp
 +++ b/src/svg/qsvghandler.cpp
 @@ -65,6 +65,7 @@
@@ -478,9 +479,12 @@ index c937254..b07a8ee 100644
  
      QSvgAnimateColor *anim = new QSvgAnimateColor(begin, end, 0);
      anim->setArgs((targetStr == QLatin1String("fill")), colors);
-@@ -2493,24 +2515,13 @@ static bool parseAnimateTransformNode(QSvgNode *parent,
+@@ -2492,25 +2514,16 @@ static bool parseAnimateTransformNode(QSvgNode *parent,
+             ++s;
          }
      }
++    if (vals.count() % 3 != 0)
++        return false;
  
 -    int ms = 1000;
 -    beginStr = beginStr.trimmed();
@@ -510,7 +514,7 @@ index c937254..b07a8ee 100644
  
      QSvgAnimateTransform::TransformType type = QSvgAnimateTransform::Empty;
      if (typeStr == QLatin1String("translate")) {
-@@ -2566,6 +2577,8 @@ static QSvgNode *createCircleNode(QSvgNode *parent,
+@@ -2566,6 +2579,8 @@ static QSvgNode *createCircleNode(QSvgNode *parent,
      qreal ncx = toDouble(cx);
      qreal ncy = toDouble(cy);
      qreal nr  = toDouble(r);
@@ -519,7 +523,7 @@ index c937254..b07a8ee 100644
  
      QRectF rect(ncx-nr, ncy-nr, nr*2, nr*2);
      QSvgNode *circle = new QSvgCircle(parent, rect);
-@@ -2976,8 +2989,8 @@ static QSvgNode *createPathNode(QSvgNode *parent,
+@@ -2976,8 +2991,8 @@ static QSvgNode *createPathNode(QSvgNode *parent,
  
      QPainterPath qpath;
      qpath.setFillRule(Qt::WindingFill);
@@ -530,7 +534,7 @@ index c937254..b07a8ee 100644
  
      QSvgNode *path = new QSvgPath(parent, qpath);
      return path;
-@@ -3036,13 +3049,16 @@ static QSvgStyleProperty *createRadialGradientNode(QSvgNode *node,
+@@ -3036,13 +3051,16 @@ static QSvgStyleProperty *createRadialGradientNode(QSvgNode *node,
  
      qreal ncx = 0.5;
      qreal ncy = 0.5;
@@ -548,7 +552,7 @@ index c937254..b07a8ee 100644
  
      qreal nfx = ncx;
      if (!fx.isEmpty())
-@@ -3338,7 +3354,9 @@ static QSvgNode *createTextNode(QSvgNode *parent,
+@@ -3338,7 +3356,9 @@ static QSvgNode *createTextNode(QSvgNode *parent,
      //### editable and rotate not handled
      QSvgHandler::LengthType type;
      qreal nx = parseLength(x, type, handler);
@@ -558,7 +562,7 @@ index c937254..b07a8ee 100644
  
      QSvgNode *text = new QSvgText(parent, QPointF(nx, ny));
      return text;
-@@ -3679,9 +3697,7 @@ void QSvgHandler::parse()
+@@ -3679,9 +3699,7 @@ void QSvgHandler::parse()
          case QXmlStreamReader::EndElement:
              endElement(xml->name());
              ++remainingUnfinishedElements;
@@ -696,7 +700,7 @@ index e1f84f3..73bbe8b 100644
  QTEST_MAIN(tst_QSvgPlugin)
  #include "tst_qsvgplugin.moc"
 diff --git a/tests/auto/qsvgrenderer/tst_qsvgrenderer.cpp b/tests/auto/qsvgrenderer/tst_qsvgrenderer.cpp
-index 8f1f03b..36c76ec 100644
+index 8f1f03b..db71e02 100644
 --- a/tests/auto/qsvgrenderer/tst_qsvgrenderer.cpp
 +++ b/tests/auto/qsvgrenderer/tst_qsvgrenderer.cpp
 @@ -74,6 +74,7 @@ private slots:
@@ -707,7 +711,16 @@ index 8f1f03b..36c76ec 100644
      void displayMode();
      void strokeInherit();
      void testFillInheritance();
-@@ -1047,6 +1048,19 @@ void tst_QSvgRenderer::paths()
+@@ -85,6 +86,8 @@ private slots:
+     void oss_fuzz_23731();
+     void oss_fuzz_24131();
+     void oss_fuzz_24738();
++    void illegalAnimateTransform_data();
++    void illegalAnimateTransform();
+ 
+ #ifndef QT_NO_COMPRESS
+     void testGzLoading();
+@@ -1047,6 +1050,19 @@ void tst_QSvgRenderer::paths()
      }
  }
  
@@ -727,3 +740,26 @@ index 8f1f03b..36c76ec 100644
  void tst_QSvgRenderer::displayMode()
  {
      static const char *svgs[] = {
+@@ -1632,5 +1648,22 @@ void tst_QSvgRenderer::oss_fuzz_24738()
+     QSvgRenderer().load(QByteArray("<svg><path d=\"a 2 1e-212.....\">"));
+ }
+ 
++void tst_QSvgRenderer::illegalAnimateTransform_data()
++{
++    QTest::addColumn<QByteArray>("svg");
++
++    QTest::newRow("case1") << QByteArray("<svg><animateTransform type=\"rotate\" begin=\"1\" dur=\"2\" values=\"8,0,5,0\">");
++    QTest::newRow("case2") << QByteArray("<svg><animateTransform type=\"rotate\" begin=\"1\" dur=\"2\" values=\"1,2\">");
++    QTest::newRow("case3") << QByteArray("<svg><animateTransform type=\"rotate\" begin=\"1\" dur=\"2\" from=\".. 5 2\" to=\"f\">");
++    QTest::newRow("case4") << QByteArray("<svg><animateTransform type=\"scale\" begin=\"1\" dur=\"2\" by=\"--,..\">");
++}
++
++void tst_QSvgRenderer::illegalAnimateTransform()
++{
++    QFETCH(QByteArray, svg);
++    QSvgRenderer renderer;
++    QVERIFY(!renderer.load(svg)); // also shouldn't assert
++}
++
+ QTEST_MAIN(tst_QSvgRenderer)
+ #include "tst_qsvgrenderer.moc"
